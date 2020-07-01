@@ -15,13 +15,17 @@ server {
         ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
 
         root /var/www/wp;
-        index index.html index.htm index.nginx-debian.html index.php;
 
         server_name localhost www.localhost;
 
         location / 
         {
-                try_files $uri $uri/ /index.php?$args;
+                if ($index == 'on') {
+                        autoindex on;
+                }
+                if ($index != 'on') {
+                        try_files $uri $uri/ /index.php?$args;
+                }
         }
 
         location ~ \.php$
