@@ -12,6 +12,7 @@ RUN	cd /tmp \
 	&& tar xf phpMyAdmin-5.0.2-all-languages.tar.gz && mkdir -p /var/www/wp/phpmyadmin \
 	&& mv /tmp/phpMyAdmin-5.0.2-all-languages/* /var/www/wp/phpmyadmin \
 	&& chown -R www-data: /var/www/wp
+RUN	mkdir /var/www/wp/index && touch /var/www/wp/index/example.txt
 
 COPY srcs/init.sql /tmp
 RUN	service mysql start && mysql < /tmp/init.sql
@@ -26,7 +27,7 @@ RUN	ln -s /etc/nginx/sites-available/wp /etc/nginx/sites-enabled && rm -f /etc/n
 RUN	ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
 
 ENV	AUTOINDEX 'on'
-RUN sed -i "16iperl_set $index 'sub {return $ENV{\"AUTOINDEX\"};}';" /etc/nginx/nginx.conf
+RUN sed -i "16iperl_set \$index 'sub {return $ENV{\"AUTOINDEX\"};}';" /etc/nginx/nginx.conf
 
 EXPOSE 80
 EXPOSE 443

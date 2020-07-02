@@ -16,16 +16,14 @@ server {
 
         root /var/www/wp;
 
+        index index.php;
+
         server_name localhost www.localhost;
 
         location / 
         {
-                if ($index == 'on') {
-                        autoindex on;
-                }
-                if ($index != 'on') {
-                        try_files $uri $uri/ /index.php?$args;
-                }
+                autoindex on;
+                try_files $uri $uri/ /index.php?$args;
         }
 
         location ~ \.php$
