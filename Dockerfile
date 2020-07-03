@@ -2,7 +2,7 @@ FROM debian:buster
 
 RUN	apt-get update \
 	&& apt-get upgrade \
-	&& apt-get install -y nginx libnginx-mod-http-perl mariadb-server openssl wget\
+	&& apt-get install -y nginx mariadb-server openssl wget\
 	php7.3-cli php7.3-fpm php7.3-mysql php7.3-json php7.3-opcache php7.3-mbstring php7.3-xml php7.3-gd php7.3-curl
 
 RUN	cd /tmp \
@@ -14,22 +14,22 @@ RUN	cd /tmp \
 	&& chown -R www-data: /var/www/wp
 RUN	mkdir /var/www/wp/index && touch /var/www/wp/index/example.txt
 
-COPY srcs/init.sql /tmp
-RUN	service mysql start && mysql < /tmp/init.sql
-
 RUN openssl req -x509 -nodes -days 365 -subj "/C=FR/ST=IDF/O=42/CN=localhost" \
 	-addext "subjectAltName=DNS:localhost" -newkey rsa:4096 -keyout /etc/ssl/private/nginx-selfsigned.key \
 	-out /etc/ssl/certs/nginx-selfsigned.crt
 
+COPY srcs/init.sql /tmp
+RUN	service mysql start && mysql < /tmp/init.sql
+
 COPY srcs/wp /etc/nginx/sites-available
 RUN	ln -s /etc/nginx/sites-available/wp /etc/nginx/sites-enabled && rm -f /etc/nginx/sites-enabled/default
 
-RUN	ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
+ENV	AUTOINDEX 1
 
-ENV	AUTOINDEX 'on'
-RUN sed -i "16iperl_set \$index 'sub {return $ENV{\"AUTOINDEX\"};}';" /etc/nginx/nginx.conf
+COPY srcs/init_index.sh /tmp
+RUN	chmod o+x /tmp/init_index.sh
 
 EXPOSE 80
 EXPOSE 443
 
-ENTRYPOINT service php7.3-fpm start && service mysql start && nginx -g 'daemon off;'
+CMD bash /tmp/init_index.sh && service php7.3-fpm start && service mysql start && nginx -g 'daemon off;'
