@@ -32,4 +32,4 @@ RUN	chmod o+x /tmp/init_index.sh
 EXPOSE 80
 EXPOSE 443
 
-CMD bash /tmp/init_index.sh && service php7.3-fpm start && service mysql start && nginx -g 'daemon off;'
+CMD bash /tmp/init_index.sh; service php7.3-fpm start && service mysql start && nginx -g 'daemon off;'
