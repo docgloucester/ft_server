@@ -5,10 +5,10 @@ RUN	apt-get update \
 	&& apt-get install -y nginx mariadb-server openssl wget\
 	php7.3-cli php7.3-fpm php7.3-mysql php7.3-json php7.3-opcache php7.3-mbstring php7.3-xml php7.3-gd php7.3-curl
 
+COPY srcs/phpMyAdmin-5.0.2-all-languages.tar.gz /tmp
+COPY srcs/wordpress-5.4.2.tar.gz /tmp
 RUN	cd /tmp \
-	&& wget https://wordpress.org/latest.tar.gz \
-	&& wget https://files.phpmyadmin.net/phpMyAdmin/5.0.2/phpMyAdmin-5.0.2-all-languages.tar.gz \
-	&& tar xf latest.tar.gz && mkdir -p /var/www/wp && mv /tmp/wordpress/* /var/www/wp \
+	&& tar xf wordpress-5.4.2.tar.gz && mkdir -p /var/www/wp && mv /tmp/wordpress/* /var/www/wp \
 	&& tar xf phpMyAdmin-5.0.2-all-languages.tar.gz && mkdir -p /var/www/wp/phpmyadmin \
 	&& mv /tmp/phpMyAdmin-5.0.2-all-languages/* /var/www/wp/phpmyadmin \
 	&& chown -R www-data: /var/www/wp
