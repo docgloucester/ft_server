@@ -1,7 +1,7 @@
 FROM debian:buster
 
-RUN	apt-get update \
-	&& apt-get upgrade \
+RUN	apt-get update -y\
+	&& apt-get upgrade -y\
 	&& apt-get install -y nginx mariadb-server openssl wget\
 	php7.3-cli php7.3-fpm php7.3-mysql php7.3-json php7.3-opcache php7.3-mbstring php7.3-xml php7.3-gd php7.3-curl
 
